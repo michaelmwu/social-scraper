@@ -30,6 +30,24 @@ Browser adapters are optional:
 uv sync --extra browser
 ```
 
+## Development
+
+Stable check entrypoints live in `scripts/`:
+
+```sh
+./scripts/lint.sh
+./scripts/typecheck.sh
+./scripts/test.sh
+```
+
+Run the full local gate before handoff or PR work:
+
+```sh
+./scripts/check-all.sh
+```
+
+Configuration starts from `.env.example`; local `.env` and `.sessions/` state are ignored.
+
 ## Configuration
 
 Create `.env` locally:

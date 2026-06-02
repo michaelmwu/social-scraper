@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class Platform(str, Enum):
+class Platform(StrEnum):
     INSTAGRAM = "instagram"
     TIKTOK = "tiktok"
     UNKNOWN = "unknown"
@@ -33,7 +33,12 @@ class SocialPost(BaseModel):
     caption: str | None = None
     location_tag: str | None = None
     media: list[MediaItem] = Field(default_factory=list)
-    source_confidence: Literal["http_metadata", "botasaurus", "cloakbrowser", "manual"] = "http_metadata"
+    source_confidence: Literal[
+        "http_metadata",
+        "botasaurus",
+        "cloakbrowser",
+        "manual",
+    ] = "http_metadata"
     raw_metadata: dict[str, Any] = Field(default_factory=dict)
 
 

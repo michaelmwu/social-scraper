@@ -15,7 +15,7 @@ from social_place_scraper.sessions import ManagedSession
 
 class HttpMetadataFetcher(Fetcher):
     def fetch(self, url: str, session: ManagedSession) -> SocialPost:
-        client = requests.Session(impersonate="chrome")
+        client: requests.Session = requests.Session(impersonate="chrome")
         self._load_cookies(client, session.cookie_file)
         response = client.get(
             url,
@@ -29,7 +29,12 @@ class HttpMetadataFetcher(Fetcher):
         self._save_cookies(client, session.cookie_file)
 
         page_title, meta = parse_metadata(response.text)
-        maybe_raise_intervention(url=str(response.url), session=session, title=page_title, html=response.text)
+        maybe_raise_intervention(
+            url=str(response.url),
+            session=session,
+            title=page_title,
+            html=response.text,
+        )
         response.raise_for_status()
         platform = detect_platform(str(response.url))
         image_url = meta.get("og:image") or meta.get("twitter:image")
@@ -38,14 +43,20 @@ class HttpMetadataFetcher(Fetcher):
         if image_url:
             media.append(MediaItem(type="image", url=image_url, position=0))
         if video_url:
-            media.append(MediaItem(type="video", url=video_url, thumbnail_url=image_url, position=0))
+            media.append(
+                MediaItem(type="video", url=video_url, thumbnail_url=image_url, position=0)
+            )
 
         return SocialPost(
             platform=platform,
             canonical_url=str(response.url),
             post_id=extract_post_id(str(response.url), platform),
             title=meta.get("og:title") or page_title,
-            caption=meta.get("og:description") or meta.get("description") or meta.get("twitter:description"),
+            caption=(
+                meta.get("og:description")
+                or meta.get("description")
+                or meta.get("twitter:description")
+            ),
             media=media,
             source_confidence="http_metadata",
             raw_metadata=meta,
@@ -56,7 +67,12 @@ class HttpMetadataFetcher(Fetcher):
             return
         data = json.loads(cookie_file.read_text())
         for cookie in data:
-            client.cookies.set(cookie["name"], cookie["value"], domain=cookie.get("domain"), path=cookie.get("path", "/"))
+            client.cookies.set(
+                cookie["name"],
+                cookie["value"],
+                domain=cookie.get("domain"),
+                path=cookie.get("path", "/"),
+            )
 
     def _save_cookies(self, client: requests.Session, cookie_file: Path) -> None:
         cookie_file.parent.mkdir(parents=True, exist_ok=True)

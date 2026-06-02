@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Literal
 
 from social_place_scraper.platforms import detect_platform
-from social_place_scraper.schemas import HumanIntervention, Platform
+from social_place_scraper.schemas import HumanIntervention
 from social_place_scraper.sessions import ManagedSession
+
+InterventionKind = Literal["login", "verification_code", "captcha", "checkpoint", "unknown"]
+CodeChannel = Literal["email", "sms", "authenticator", "unknown"]
 
 
 class HumanInterventionRequired(RuntimeError):
@@ -43,7 +47,7 @@ def maybe_raise_intervention(
     platform = detect_platform(url)
     marker_text = ", ".join(matched[:3])
     kind = _kind_from_markers(matched)
-    channel = "unknown"
+    channel: CodeChannel = "unknown"
     if "email" in text:
         channel = "email"
     elif "sms" in text or "phone" in text:
@@ -67,7 +71,7 @@ def maybe_raise_intervention(
     )
 
 
-def _kind_from_markers(markers: list[str]) -> str:
+def _kind_from_markers(markers: list[str]) -> InterventionKind:
     joined = " ".join(markers)
     if "verification code" in joined or "enter the code" in joined:
         return "verification_code"

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 
@@ -34,13 +34,15 @@ class SessionManager:
         return session
 
     def _safe_name(self, name: str) -> str:
-        safe_name = "".join(char if char.isalnum() or char in "-_" else "_" for char in name.strip())
+        safe_name = "".join(
+            char if char.isalnum() or char in "-_" else "_" for char in name.strip()
+        )
         if not safe_name or not any(char.isalnum() for char in safe_name):
             raise ValueError("Session name must include at least one letter or number.")
         return safe_name
 
     def _touch_metadata(self, session: ManagedSession) -> None:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         payload = {
             "name": session.name,
             "profileDir": str(session.profile_dir),
