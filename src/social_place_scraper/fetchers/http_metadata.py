@@ -26,11 +26,11 @@ class HttpMetadataFetcher(Fetcher):
                 "cache-control": "no-cache",
             },
         )
-        response.raise_for_status()
         self._save_cookies(client, session.cookie_file)
 
         page_title, meta = parse_metadata(response.text)
         maybe_raise_intervention(url=str(response.url), session=session, title=page_title, html=response.text)
+        response.raise_for_status()
         platform = detect_platform(str(response.url))
         image_url = meta.get("og:image") or meta.get("twitter:image")
         video_url = meta.get("og:video") or meta.get("twitter:player:stream")

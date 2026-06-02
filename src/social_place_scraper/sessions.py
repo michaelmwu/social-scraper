@@ -20,7 +20,7 @@ class SessionManager:
         self.root = root
 
     def get(self, name: str) -> ManagedSession:
-        safe_name = "".join(char if char.isalnum() or char in "-_" else "_" for char in name)
+        safe_name = self._safe_name(name)
         session_root = self.root / safe_name
         session = ManagedSession(
             name=safe_name,
@@ -32,6 +32,12 @@ class SessionManager:
         session.profile_dir.mkdir(parents=True, exist_ok=True)
         self._touch_metadata(session)
         return session
+
+    def _safe_name(self, name: str) -> str:
+        safe_name = "".join(char if char.isalnum() or char in "-_" else "_" for char in name.strip())
+        if not safe_name or not any(char.isalnum() for char in safe_name):
+            raise ValueError("Session name must include at least one letter or number.")
+        return safe_name
 
     def _touch_metadata(self, session: ManagedSession) -> None:
         now = datetime.now(timezone.utc).isoformat()

@@ -10,7 +10,7 @@ from social_place_scraper.config import load_config
 from social_place_scraper.fetchers.http_metadata import HttpMetadataFetcher
 from social_place_scraper.llm import LlmExtractor
 from social_place_scraper.maps import attach_maps_urls
-from social_place_scraper.schemas import IngestResult, InterventionResult, SocialPost
+from social_place_scraper.schemas import InterventionResult, SocialPost
 from social_place_scraper.sessions import SessionManager
 
 
@@ -72,8 +72,7 @@ def main(argv: list[str] | None = None) -> int:
 
     extraction = LlmExtractor(config.llm).extract(post)
     extraction = attach_maps_urls(extraction)
-    result = IngestResult(post=post, extraction=extraction)
-    print_json(result.model_dump(mode="json"), compact=args.json)
+    print_json(extraction.model_dump(mode="json"), compact=args.json)
     return 0
 
 
