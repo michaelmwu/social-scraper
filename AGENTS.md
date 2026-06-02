@@ -9,7 +9,8 @@
 ## Dependency Supply-Chain Safety
 
 - Keep `uv.lock` committed.
-- Keep `exclude-newer` values in `pyproject.toml` as uv-supported RFC3339 timestamps or local dates.
+- Use `uv >= 0.11.0`; the repo relies on relative dependency cooldowns.
+- Keep `exclude-newer = "7 days"` in `pyproject.toml`.
 - Use locked installs in CI and automation: `uv sync --locked`.
 
 ## Repository Shape

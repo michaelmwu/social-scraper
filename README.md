@@ -32,6 +32,8 @@ uv sync --extra browser
 
 ## Development
 
+Use `uv >=0.11.0`; the project relies on uv's relative dependency cooldowns.
+
 Stable check entrypoints live in `scripts/`:
 
 ```sh
