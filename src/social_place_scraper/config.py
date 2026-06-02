@@ -32,9 +32,13 @@ def load_config(
 ) -> AppConfig:
     load_dotenv()
 
-    llm_provider = provider or os.getenv("SOCIAL_PLACE_LLM_PROVIDER", "openai-compatible")
-    llm_model = model or os.getenv("SOCIAL_PLACE_LLM_MODEL", "gpt-4.1-mini")
-    root = Path(session_root or os.getenv("SOCIAL_PLACE_SESSION_ROOT", ".sessions"))
+    llm_provider = provider or _env_default(
+        "SOCIAL_PLACE_LLM_PROVIDER",
+        "openai-compatible",
+    )
+    llm_model = model or _env_default("SOCIAL_PLACE_LLM_MODEL", "gpt-4.1-mini")
+    root = Path(session_root or _env_default("SOCIAL_PLACE_SESSION_ROOT", ".sessions"))
+    resolved_session_name = session_name or _env_default("SOCIAL_PLACE_SESSION_NAME", "default")
 
     return AppConfig(
         llm=LlmConfig(
@@ -44,6 +48,10 @@ def load_config(
             model=llm_model,
             temperature=float(os.getenv("SOCIAL_PLACE_LLM_TEMPERATURE", "0")),
         ),
-        session_name=session_name or os.getenv("SOCIAL_PLACE_SESSION_NAME", "default"),
+        session_name=resolved_session_name,
         session_root=root,
     )
+
+
+def _env_default(name: str, default: str) -> str:
+    return os.getenv(name) or default

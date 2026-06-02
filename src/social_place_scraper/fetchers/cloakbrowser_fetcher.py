@@ -13,7 +13,9 @@ class CloakBrowserFetcher(Fetcher):
         try:
             from cloakbrowser import launch_persistent_context
         except ImportError as exc:
-            raise RuntimeError("Install browser dependencies with `uv sync --extra browser`.") from exc
+            raise RuntimeError(
+                "Install browser dependencies with `uv sync --extra browser`."
+            ) from exc
 
         context = launch_persistent_context(user_data_dir=str(session.profile_dir))
         screenshot_path = session.root / "last-challenge.png"
@@ -42,13 +44,19 @@ class CloakBrowserFetcher(Fetcher):
         if image_url:
             media.append(MediaItem(type="image", url=image_url, position=0))
         if video_url:
-            media.append(MediaItem(type="video", url=video_url, thumbnail_url=image_url, position=0))
+            media.append(
+                MediaItem(type="video", url=video_url, thumbnail_url=image_url, position=0)
+            )
         return SocialPost(
             platform=platform,
             canonical_url=canonical_url,
             post_id=extract_post_id(canonical_url, platform),
             title=meta.get("og:title") or page_title or title,
-            caption=meta.get("og:description") or meta.get("description") or meta.get("twitter:description"),
+            caption=(
+                meta.get("og:description")
+                or meta.get("description")
+                or meta.get("twitter:description")
+            ),
             media=media,
             source_confidence="cloakbrowser",
             raw_metadata=meta,

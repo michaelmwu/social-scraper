@@ -4,7 +4,6 @@ import json
 
 from social_place_scraper.schemas import SocialPost
 
-
 SYSTEM_PROMPT = """You extract real-world place candidates from social media posts.
 
 Return only JSON matching this schema:
@@ -24,7 +23,8 @@ Return only JSON matching this schema:
 }
 
 Rules:
-- Prefer the most salient visit-worthy places: restaurants, cafes, bars, hotels, shops, museums, parks, attractions, neighborhoods, event venues.
+- Prefer the most salient visit-worthy places: restaurants, cafes, bars,
+  hotels, shops, museums, parks, attractions, neighborhoods, event venues.
 - Infer overallRegion from caption, language, hashtags, social tags, and explicit location labels.
 - Include a candidate only when the post provides evidence for a real place.
 - Keep mapsUrl null. The caller will fill it.

@@ -5,7 +5,6 @@ from urllib.parse import urlparse
 
 from social_place_scraper.schemas import Platform
 
-
 INSTAGRAM_POST_RE = re.compile(r"/(?:p|reel|tv)/([^/?#]+)/?")
 TIKTOK_VIDEO_RE = re.compile(r"/video/(\d+)")
 

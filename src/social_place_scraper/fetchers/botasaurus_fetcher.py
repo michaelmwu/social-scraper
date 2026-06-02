@@ -13,7 +13,9 @@ class BotasaurusFetcher(Fetcher):
         try:
             from botasaurus.browser import Driver, browser
         except ImportError as exc:
-            raise RuntimeError("Install browser dependencies with `uv sync --extra browser`.") from exc
+            raise RuntimeError(
+                "Install browser dependencies with `uv sync --extra browser`."
+            ) from exc
 
         def get_profile(data: dict[str, str]) -> str:
             return data["profile"]
@@ -33,7 +35,12 @@ class BotasaurusFetcher(Fetcher):
         html = result.get("html") or ""
         page_title, meta = parse_metadata(html)
         canonical_url = result.get("url") or url
-        maybe_raise_intervention(url=canonical_url, session=session, title=page_title or result.get("title"), html=html)
+        maybe_raise_intervention(
+            url=canonical_url,
+            session=session,
+            title=page_title or result.get("title"),
+            html=html,
+        )
         platform = detect_platform(canonical_url)
         image_url = meta.get("og:image") or meta.get("twitter:image")
         video_url = meta.get("og:video") or meta.get("twitter:player:stream")
@@ -41,13 +48,19 @@ class BotasaurusFetcher(Fetcher):
         if image_url:
             media.append(MediaItem(type="image", url=image_url, position=0))
         if video_url:
-            media.append(MediaItem(type="video", url=video_url, thumbnail_url=image_url, position=0))
+            media.append(
+                MediaItem(type="video", url=video_url, thumbnail_url=image_url, position=0)
+            )
         return SocialPost(
             platform=platform,
             canonical_url=canonical_url,
             post_id=extract_post_id(canonical_url, platform),
             title=meta.get("og:title") or page_title or result.get("title"),
-            caption=meta.get("og:description") or meta.get("description") or meta.get("twitter:description"),
+            caption=(
+                meta.get("og:description")
+                or meta.get("description")
+                or meta.get("twitter:description")
+            ),
             media=media,
             source_confidence="botasaurus",
             raw_metadata=meta,
