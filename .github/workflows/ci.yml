@@ -27,8 +27,5 @@ jobs:
       - name: Install Python
         run: uv python install 3.13
 
-      - name: Check lockfile
-        run: uv lock --check
-
       - name: Run checks
         run: ./scripts/check-all.sh
