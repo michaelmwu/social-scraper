@@ -21,10 +21,10 @@ This repo uses `uv` dependency cooldowns and a committed lockfile:
 
 ```toml
 [tool.uv]
-exclude-newer = "7 days"
+exclude-newer = "2026-05-27T00:00:00Z"
 
 [tool.uv.pip]
-exclude-newer = "7 days"
+exclude-newer = "2026-05-27T00:00:00Z"
 ```
 
 Automation should use locked installs:
