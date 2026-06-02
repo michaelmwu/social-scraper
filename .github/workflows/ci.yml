@@ -28,4 +28,6 @@ jobs:
         run: uv python install 3.13
 
       - name: Run checks
+        env:
+          UV_LOCKED: "1"
         run: ./scripts/check-all.sh
