@@ -22,12 +22,18 @@ LOGIN_MARKERS = [
     "login",
     "sign in",
     "sign up",
+    "login_required",
+    "feedback_required",
+    "challenge_required",
     "checkpoint",
+    "checkpoint_required",
     "security check",
     "verify it's you",
     "verification code",
     "enter the code",
     "captcha",
+    "too many requests",
+    "rate limited",
 ]
 
 
@@ -79,6 +85,6 @@ def _kind_from_markers(markers: list[str]) -> InterventionKind:
         return "captcha"
     if "checkpoint" in joined or "security check" in joined or "verify it's you" in joined:
         return "checkpoint"
-    if "log in" in joined or "login" in joined or "sign in" in joined:
+    if "log in" in joined or "login" in joined or "sign in" in joined or "login_required" in joined:
         return "login"
     return "unknown"
