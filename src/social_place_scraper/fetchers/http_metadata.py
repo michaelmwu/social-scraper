@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 from curl_cffi import requests
 
@@ -14,8 +16,11 @@ from social_place_scraper.sessions import ManagedSession
 
 
 class HttpMetadataFetcher(Fetcher):
+    def __init__(self, *, client_factory: Callable[[], Any] | None = None):
+        self._client_factory = client_factory or (lambda: requests.Session(impersonate="chrome"))
+
     def fetch(self, url: str, session: ManagedSession) -> SocialPost:
-        client: requests.Session = requests.Session(impersonate="chrome")
+        client = self._client_factory()
         self._load_cookies(client, session.cookie_file)
         response = client.get(
             url,
@@ -29,14 +34,17 @@ class HttpMetadataFetcher(Fetcher):
         self._save_cookies(client, session.cookie_file)
 
         page_title, meta = parse_metadata(response.text)
+        canonical_url = str(response.url)
         maybe_raise_intervention(
-            url=str(response.url),
+            url=canonical_url,
             session=session,
             title=page_title,
             html=response.text,
         )
         response.raise_for_status()
-        platform = detect_platform(str(response.url))
+        platform = detect_platform(canonical_url)
+        post_id = extract_post_id(canonical_url, platform)
+
         image_url = meta.get("og:image") or meta.get("twitter:image")
         video_url = meta.get("og:video") or meta.get("twitter:player:stream")
         media = []
@@ -49,8 +57,8 @@ class HttpMetadataFetcher(Fetcher):
 
         return SocialPost(
             platform=platform,
-            canonical_url=str(response.url),
-            post_id=extract_post_id(str(response.url), platform),
+            canonical_url=canonical_url,
+            post_id=post_id,
             title=meta.get("og:title") or page_title,
             caption=(
                 meta.get("og:description")

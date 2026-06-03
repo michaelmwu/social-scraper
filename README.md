@@ -24,7 +24,7 @@ For first-time local setup:
 uv sync
 ```
 
-Browser adapters are optional:
+Browser adapters and the persistent browser login helper are optional:
 
 ```sh
 uv sync --extra browser
@@ -80,6 +80,33 @@ uv run social-post-ingest "https://www.tiktok.com/@user/video/123" \
   --fetcher auto
 ```
 
+Prepare an authenticated Instagram session before scraping. This requires the
+`browser` extra:
+
+```sh
+uv run social-post-ingest "https://www.instagram.com/" \
+  --session ig-personal-1 \
+  --login-only
+```
+
+Open the persistent browser for login first, then continue with the same scrape:
+
+```sh
+uv run social-post-ingest "https://www.instagram.com/p/..." \
+  --session ig-personal-1 \
+  --login
+```
+
+If a login, checkpoint, or verification challenge appears mid-run, you can have
+the CLI open the persistent browser and retry once after the browser session is
+updated:
+
+```sh
+uv run social-post-ingest "https://www.instagram.com/p/..." \
+  --session ig-personal-1 \
+  --interactive-challenges
+```
+
 The output schema is:
 
 ```json
@@ -108,6 +135,10 @@ Each named session gets:
 - a small metadata file
 
 This lets each account accumulate normal browser state over time. Use one session name per social account, for example `ig-personal-1`, `ig-personal-2`, or `tiktok-main`.
+
+The Instagram path does not use the official Instagram API, which is too limited
+for arbitrary post URLs. Named sessions can prepare browser cookies for the
+HTTP fetch path or for explicit browser fetchers.
 
 ## Human-In-The-Loop Challenges
 

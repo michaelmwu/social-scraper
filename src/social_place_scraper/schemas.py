@@ -31,7 +31,11 @@ class SocialPost(BaseModel):
     author: str | None = None
     title: str | None = None
     caption: str | None = None
+    accessibility_caption: str | None = None
     location_tag: str | None = None
+    taken_at: int | None = None
+    hashtags: list[str] = Field(default_factory=list)
+    mentions: list[str] = Field(default_factory=list)
     media: list[MediaItem] = Field(default_factory=list)
     source_confidence: Literal[
         "http_metadata",
